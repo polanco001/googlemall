@@ -1,10 +1,26 @@
 const express = require("express");
 const { createClient } = require("@supabase/supabase-js");
 const cors = require("cors");
+const path = require("path"); // 1. MUST HAVE THIS
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+// 2. THIS LINE TELLS EXPRESS TO SERVE YOUR HTML/CSS FILES
+app.use(express.static(path.join(__dirname))); 
+
+// 3. THIS LINE MANUALLY SENDS INDEX.HTML WHEN YOU VISIT THE LINK
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// ... (Your /login and /users routes here) ...
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
 // --- SUPABASE CONNECTION ---
 const supabaseUrl = 'https://eslhufyhllrubjxstyob.supabase.co';
